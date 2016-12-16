@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<decorators defaultdir="/WEB-INF/layout/">
+	<excludes>
+		<pattern>/ServiceServlet/*</pattern>
+		<pattern>/widgets/*</pattern>
+		<pattern>/uploadFiles/*</pattern>
+		<pattern>/static/*</pattern>
+		<pattern>/api/*</pattern>
+		<pattern>/login</pattern>
+		<pattern>/account/dept/*</pattern>
+		<pattern>/news/newsAndAnnType/*</pattern>
+		<pattern>/index*</pattern>
+	</excludes>
+
+	<decorator name="default" page="default.jsp">
+		<pattern>/*</pattern>
+	</decorator>
+</decorators>

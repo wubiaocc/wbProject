@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd"
+	default-lazy-init="false">
+
+	<bean id="agentsProfitJobDetailNew"
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean" >
+		<property name="jobClass" value="com.wizarpos.agent.portal.service.quartz.AgentsProfitQuartzNew" />
+		<property name="durability" value="true" />
+		<property name="requestsRecovery" value="true" />
+	</bean>
+
+	<bean id="agentsProfitTriggerNew"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="agentsProfitJobDetailNew" />
+		<property name="cronExpression" value="0 0 4 * * ?" />
+	</bean>
+
+
+	<bean id="weixinJobDetail"
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean" >
+		<property name="jobClass" value="com.wizarpos.agent.portal.service.quartz.TaskService" />
+		<property name="durability" value="true" />
+		<property name="requestsRecovery" value="true" />
+		
+	</bean>
+
+	<bean id="weixinTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="weixinJobDetail" />
+		<property name="cronExpression" value="0 0 10,11,12,13,14 * * ?" />
+	</bean>
+	
+	<bean id="qqJobDetail"
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean" >
+		<property name="jobClass" value="com.wizarpos.agent.portal.service.quartz.QQTaskService" />
+		<property name="durability" value="true" />
+		<property name="requestsRecovery" value="true" />
+		
+	</bean>
+
+	<bean id="qqTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="qqJobDetail" />
+		<property name="cronExpression" value="0 0 8,9,10 * * ?" />
+	</bean>
+     <bean id="cleanJobDetail"
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean" >
+		<property name="jobClass" value="com.wizarpos.agent.portal.service.quartz.CleanService" />
+		<property name="durability" value="true" />
+		<property name="requestsRecovery" value="true" />
+		
+	</bean>
+
+	<bean id="cleanTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="cleanJobDetail" />
+		<property name="cronExpression" value="0 0 18 * * ?" />
+	</bean>
+
+
+
+	<bean name="agentPortalQuartzScheduler"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		  <property name="dataSource" ref="dataSource" />
+		 <!-- 延迟5s启动 -->
+		 <property name="startupDelay" value="30" />
+		  <property name="schedulerContextAsMap">
+            <map>
+                <entry key="agentProfitLogDao" value-ref="agentProfitLogDao"></entry>
+                <entry key="merchantDefDao" value-ref="merchantDefDao"></entry>
+                <entry key="tranLogDao" value-ref="tranLogDao"></entry>
+                <entry key="agentMerchantDefDao" value-ref="agentMerchantDefDao"></entry>
+                <entry key="agentProfitRuleDao" value-ref="agentProfitRuleDao"></entry>
+                <entry key="mrtPayBillDao" value-ref="mrtPayBillDao"></entry>
+                
+                <entry key="superMerchantDefManager" value-ref="superMerchantDefManager"></entry>
+	            <entry key="payThirdBillManager" value-ref="payThirdBillManager"></entry>
+	            <entry key="merchantDefManager" value-ref="merchantDefManager"></entry>
+	            <entry key="merchantVirtPayLogManager" value-ref="merchantVirtPayLogManager"></entry>
+	            <entry key="payBillDifferenceManager" value-ref="payBillDifferenceManager"></entry>
+	            <entry key="tranLogManager" value-ref="tranLogManager"></entry>
+	            <entry key="merchantVirtAssetLogManager" value-ref="merchantVirtAssetLogManager"></entry>
+	            <entry key="billDetailManager" value-ref="billDetailManager"></entry>
+	            <entry key="merchantVirtAccountManager" value-ref="merchantVirtAccountManager"></entry>
+	            <entry key="billManager" value-ref="billManager"></entry>
+	            
+	            <entry key="otherPayParamsDao" value-ref="otherPayParamsDao"></entry>
+	            
+            </map>
+
+        </property> 
+		<property name="configLocation" value="classpath:/quartz/quartz.properties" />
+		<property name="applicationContextSchedulerContextKey" value="applicationContextKey" />   
+		<property name="jobDetails">
+			<list>
+				<ref bean="agentsProfitJobDetailNew" />
+				<ref bean="weixinJobDetail" />
+				<ref bean="qqJobDetail" />
+				<ref bean="cleanJobDetail" />
+			</list>
+		</property>
+		<property name="triggers">
+			<list>
+				<ref bean="agentsProfitTriggerNew" />
+				<ref bean="weixinTrigger" />
+				<ref bean="qqTrigger" />
+				<ref bean="cleanTrigger" />
+			</list>
+		</property>
+	</bean>
+
+</beans>
